@@ -1,26 +1,154 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Dino Quiz</title>
-    <meta charset="UTF-8" />
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        text-align: center;
-        padding: 20px;
-      }
-      .question {
-        margin: 20px 0;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Dinosaur Quiz</h1>
-    <div class="question">
-      <p>Which dinosaur is known as the "different lizard"?</p>
-      <button onclick="alert('Correct!')">Allosaurus</button>
-      <button onclick="alert('Nope!')">Tyrannosaurus</button>
-      <button onclick="alert('Nope!')">Velociraptor</button>
-    </div>
-  </body>
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dino Quiz - Smarter Than a Velociraptor?</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Caesar+Dressing&display=swap');body {
+  font-family: 'Caesar Dressing', cursive;
+  margin: 0;
+  padding: 0;
+  background-image: url('https://images.unsplash.com/photo-1608889175114-93675a6d092d'); /* Jungle background */
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.quiz-container {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  max-width: 600px;
+  width: 90%;
+  text-align: center;
+  position: relative;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+button {
+  display: block;
+  width: 100%;
+  margin: 0.5rem 0;
+  padding: 0.75rem;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #4CAF50;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #388e3c;
+}
+
+.score {
+  margin-top: 1rem;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.animation {
+  display: none;
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;
+}
+
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h1>Smarter Than a Velociraptor? Prove It.</h1>
+    <h2 id="question">Loading question...</h2>
+    <div id="answers"></div>
+    <div class="score" id="score">Score: 0</div>
+    <img src="https://media.tenor.com/vjY5vR13X8sAAAAC/mosasaur-jaws.gif" class="animation" id="wrongAnimation" />
+  </div>
+  <script>
+    const quizData = {
+      easy: [
+        { question: "What did dinosaurs eat if they were herbivores?", answers: ["Meat", "Fish", "Plants", "Other dinosaurs"], correct: 2 },
+        { question: "Which dinosaur had a long neck and ate plants?", answers: ["Velociraptor", "Tyrannosaurus", "Stegosaurus", "Brachiosaurus"], correct: 3 }
+      ],
+      medium: [
+        { question: "What period did the Allosaurus live in?", answers: ["Triassic", "Cretaceous", "Jurassic", "Paleozoic"], correct: 2 },
+        { question: "Which of these dinosaurs was likely a pack hunter?", answers: ["Triceratops", "Velociraptor", "Stegosaurus", "Brachiosaurus"], correct: 1 }
+      ],
+      hard: [
+        { question: "Which dinosaur had semi-opposable fingers and was related to modern birds?", answers: ["Allosaurus", "Troodon", "Spinosaurus", "Pachycephalosaurus"], correct: 1 },
+        { question: "What’s the estimated top speed of a T. rex?", answers: ["70 km/h", "20 km/h", "40 km/h", "10 km/h"], correct: 2 }
+      ]
+    };let currentDifficulty = 'medium';
+let currentIndex = 0;
+let score = 0;
+
+function getNextQuestion() {
+  const questions = quizData[currentDifficulty];
+  if (currentIndex >= questions.length) {
+    currentIndex = 0;
+  }
+  return questions[currentIndex];
+}
+
+function renderQuestion() {
+  const questionObj = getNextQuestion();
+  document.getElementById('question').textContent = questionObj.question;
+
+  const answersContainer = document.getElementById('answers');
+  answersContainer.innerHTML = '';
+  questionObj.answers.forEach((answer, idx) => {
+    const btn = document.createElement('button');
+    btn.textContent = answer;
+    btn.onclick = () => checkAnswer(idx);
+    answersContainer.appendChild(btn);
+  });
+}
+
+function checkAnswer(selectedIndex) {
+  const questionObj = getNextQuestion();
+  const isCorrect = selectedIndex === questionObj.correct;
+  const animation = document.getElementById('wrongAnimation');
+
+  if (isCorrect) {
+    if (currentDifficulty === 'easy') score += 4;
+    else if (currentDifficulty === 'medium') score += 8;
+    else if (currentDifficulty === 'hard') score += 10;
+
+    currentDifficulty = currentDifficulty === 'easy' ? 'medium' : 'hard';
+  } else {
+    // Trigger Mosasaurus animation
+    animation.style.display = 'block';
+    setTimeout(() => {
+      animation.style.display = 'none';
+    }, 1500);
+
+    currentDifficulty = currentDifficulty === 'hard' ? 'medium' : 'easy';
+  }
+
+  currentIndex++;
+  document.getElementById('score').textContent = `Score: ${score}`;
+  setTimeout(renderQuestion, 500);
+}
+
+renderQuestion();
+
+  </script>
+</body>
 </html>
